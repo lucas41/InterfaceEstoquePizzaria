@@ -14,9 +14,11 @@ namespace InterfaceEstoque
     
     public partial class Ingrediente
     {
+        
         public int id_ingrediente { get; set; }
         public string nome { get; set; }
-        public Nullable<int> quant_atual { get; set; }
-        public Nullable<int> quant_max { get; set; }
+        public int quant_atual { get; set; }
+        public int quant_max { get; set; }
+        
     }
 }

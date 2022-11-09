@@ -23,7 +23,7 @@ namespace InterfaceEstoque
         private void cadastrar_Click(object sender, EventArgs e)
         {
 
-            using (PizzariaDiegoEntities ctx = new PizzariaDiegoEntities())
+            using (EstoquePizzariaEntities ctx = new EstoquePizzariaEntities())
             {
                 Ingrediente ingrediente = new Ingrediente();
                 try

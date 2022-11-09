@@ -19,7 +19,6 @@ namespace InterfaceEstoque
     {
         Thread nt;
 
-
         public FormGerenciarEstoque()
         {
             InitializeComponent();
@@ -30,9 +29,9 @@ namespace InterfaceEstoque
             atualizaGrid();
         }
 
-        public void atualizaGrid()
+        private void atualizaGrid()
         {
-            using (PizzariaDiegoEntities ctx = new PizzariaDiegoEntities())
+            using (EstoquePizzariaEntities ctx = new EstoquePizzariaEntities())
             {
                 dgvDados.DataSource = ctx.Ingrediente.ToList();
             }
@@ -40,8 +39,14 @@ namespace InterfaceEstoque
 
         private void addIngrediente_Click(object sender, EventArgs e)
         {
+            if (ehVazio()) { return; }
+
+            int linha = Convert.ToInt16(dgvDados.CurrentRow.Index);
+            int id = Int32.Parse(dgvDados.Rows[linha].Cells[0].Value.ToString());
+            ponteiroDVG.ID = id;
+
             this.Close();
-            nt = new Thread(proximaPagina);
+            nt = new Thread(paginaADDIngrediente);
             nt.SetApartmentState(ApartmentState.STA);
             nt.Start();
         }
@@ -52,10 +57,9 @@ namespace InterfaceEstoque
             try
             {
                 int linha = Convert.ToInt16(dgvDados.CurrentRow.Index);
-
                 int id = Int32.Parse(dgvDados.Rows[linha].Cells[0].Value.ToString());
 
-                using (PizzariaDiegoEntities ctx = new PizzariaDiegoEntities())
+                using (EstoquePizzariaEntities ctx = new EstoquePizzariaEntities())
                 {
                     Ingrediente a = ctx.Ingrediente.Where(x => x.id_ingrediente == id).SingleOrDefault();
 
@@ -80,39 +84,45 @@ namespace InterfaceEstoque
         {
             if (ehVazio()) { return; }
 
-            try
-            {
-                var formAtualizar = new FormAtualizarIngrediente();
-                formAtualizar.ShowDialog(); 
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Erro ao atualizar item\n" + ex);
-            }
+            int linha = Convert.ToInt16(dgvDados.CurrentRow.Index);
+            int id = Int32.Parse(dgvDados.Rows[linha].Cells[0].Value.ToString());
+            ponteiroDVG.ID = id;
 
-
-            atualizaGrid();
+            this.Close();
+            nt = new Thread(paginaATTIngrediente);
+            nt.SetApartmentState(ApartmentState.STA);
+            nt.Start();
         }
 
         private void cadastrarIngrediente_Click(object sender, EventArgs e)
         {
             this.Close();
-            nt = new Thread(proximaPagina);
+            nt = new Thread(proximaCadastrarIngrediente);
             nt.SetApartmentState(ApartmentState.STA);
             nt.Start();
         }
 
 
-        private void proximaPagina(object obj)
+        private void proximaCadastrarIngrediente(object obj)
         {
-            Application.Run(new FormAtualizarIngrediente());
+            Application.Run(new FormCadastrarIngrediente());
+        }
+
+        private void paginaADDIngrediente(object obj)
+        {
+            Application.Run(new FormAdicionarIngrediente(ponteiroDVG.ID));
+        }
+
+        private void paginaATTIngrediente(object obj)
+        {
+            Application.Run(new FormAtualizarIngrediente(ponteiroDVG.ID));
         }
 
         private void esvaziarEstoque_Click(object sender, EventArgs e)
         {
             try
             {
-                using (PizzariaDiegoEntities ctx = new PizzariaDiegoEntities())
+                using (EstoquePizzariaEntities ctx = new EstoquePizzariaEntities())
                 {
                     foreach (var item in ctx.Ingrediente)
                     {
@@ -137,7 +147,7 @@ namespace InterfaceEstoque
 
             try
             {
-                using (PizzariaDiegoEntities ctx = new PizzariaDiegoEntities())
+                using (EstoquePizzariaEntities ctx = new EstoquePizzariaEntities())
                 {
                     foreach (var item in ctx.Ingrediente)
                     {
@@ -179,5 +189,10 @@ namespace InterfaceEstoque
             Application.Run(new FormPrincipal());
         }
 
+
+        public static class ponteiroDVG 
+        {
+            public static int ID;
+        }
     }
 }

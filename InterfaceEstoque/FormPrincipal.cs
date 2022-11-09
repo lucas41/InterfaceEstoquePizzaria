@@ -23,7 +23,7 @@ namespace InterfaceEstoque
 
         private void FormPrincipal_Load(object sender, EventArgs e)
         {
-            using (PizzariaDiegoEntities ctx = new PizzariaDiegoEntities())
+            using (EstoquePizzariaEntities ctx = new EstoquePizzariaEntities())
             {
 
                 var count_atual = 0;
